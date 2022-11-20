@@ -1,8 +1,8 @@
 from datetime import datetime
-from typing import List, Optional
+from typing import Optional
 
 from bson import ObjectId
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field,EmailStr
 
 
 class PyObjectId(ObjectId):
@@ -58,3 +58,54 @@ class PostCreate(PostBase):
 
 class PostDB(PostBase):
     comments: list[CommentDB] = Field(default_factory=list)
+    
+class User(BaseModel):
+    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+    name: str = Field(...)
+    email: EmailStr = Field(...)
+    password: str = Field(...)
+
+    class Config:
+        allow_population_by_field_name = True
+        arbitrary_types_allowed = True
+        json_encoders = {ObjectId: str}
+        schema_extra = {
+            "example": {
+                "name": "John Doe",
+                "email": "jdoe@example.com",
+                "password": "secret_code"
+            }
+        }
+
+
+class UserResponse(BaseModel):
+    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+    name: str = Field(...)
+    email: EmailStr = Field(...)
+
+    class Config:
+        allow_population_by_field_name = True
+        arbitrary_types_allowed = True
+        json_encoders = {ObjectId: str}
+        schema_extra = {
+            "example": {
+                "name": "John Doe",
+                "email": "jdoe@example.com"
+            }
+        }
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+
+class TokenData(BaseModel):
+    id: Optional[str] = None
+
+
+class PasswordResetRequest(BaseModel):
+    email: EmailStr = Field(...)
+
+
+class PasswordReset(BaseModel):
+    password: str = Field(...)

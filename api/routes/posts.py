@@ -10,7 +10,7 @@ router = APIRouter(tags=['posts'])
 
 async def get_post_or_404(
     id: ObjectId = Depends(get_object_id),
-    database: AsyncIOMotorDatabase = Depends(get_database),
+    database: AsyncIOMotorDatabase = Depends(get_database)
 ) -> PostDB:
     raw_post = await database["posts"].find_one({"_id": id})
 
@@ -31,7 +31,6 @@ async def list_posts(
     results = [PostDB(**raw_post) async for raw_post in query]
 
     return results
-
 
 @router.get("/posts/{id}", response_model=PostDB)
 async def get_post(post: PostDB = Depends(get_post_or_404)) -> PostDB:
@@ -74,7 +73,7 @@ async def delete_post(
 
 
 @router.post("/posts/{id}/comments", response_model=PostDB, status_code=status.HTTP_201_CREATED)
-async def create_comment(comment: CommentCreate,post: PostDB = Depends(get_post_or_404),database: AsyncIOMotorDatabase = Depends(get_database),) -> PostDB:
+async def create_comment(comment: CommentCreate,post: PostDB = Depends(get_post_or_404),database: AsyncIOMotorDatabase = Depends(get_database)) -> PostDB:
     await database["posts"].update_one(
         {"_id": post.id}, {"$push": {"comments": comment.dict()}}
     )
