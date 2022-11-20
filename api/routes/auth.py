@@ -6,7 +6,8 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 
 # module imports
 from ..models import Token
-from ..dbconn import get_database
+# from ..dbconn import get_database
+from ..dbconn import database
 from ..hashing import Hash
 from .. import oauth
 
@@ -15,7 +16,8 @@ router = APIRouter(prefix="/login",tags=["Authentication"])
 
 
 @router.post("", response_model=Token, status_code=status.HTTP_200_OK)
-async def login(user_credentials: OAuth2PasswordRequestForm = Depends(),database: AsyncIOMotorDatabase = Depends(get_database),):
+# async def login(user_credentials: OAuth2PasswordRequestForm = Depends(),database: AsyncIOMotorDatabase = Depends(get_database),):
+async def login(user_credentials: OAuth2PasswordRequestForm = Depends()):
 
     user = await database["users"].find_one({"name": user_credentials.username})
 

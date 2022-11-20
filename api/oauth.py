@@ -11,7 +11,9 @@ load_dotenv()
 
 # module imports
 from .models import TokenData
-from .dbconn import get_database
+# from .dbconn import get_database
+from .dbconn import database
+
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='login')
@@ -42,7 +44,7 @@ def verify_access_token(token: str, credential_exception: dict):
         raise credential_exception
 
 
-async def get_current_user(token: str = Depends(oauth2_scheme),database: AsyncIOMotorDatabase = Depends(get_database),):
+async def get_current_user(token: str = Depends(oauth2_scheme)):
     credential_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="Could not verify token, token expired",headers={"WWW-AUTHENTICATE": "Bearer", })
     current_user_id = verify_access_token(token=token, credential_exception=credential_exception).id
     print(current_user_id)

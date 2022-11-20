@@ -7,7 +7,8 @@ load_dotenv()
 motor_client = AsyncIOMotorClient(
     os.getenv('MONGODB_URI')
 )  # Connection to the whole server
-database = motor_client["blogapi"]  # Single database instance
+# database = motor_client["blogapi"]  # Single database instance
+database = motor_client.blogapi # Single database instance
 
 
 def get_database() -> AsyncIOMotorDatabase:

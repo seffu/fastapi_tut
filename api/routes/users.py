@@ -4,7 +4,9 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
-from ..dbconn import get_database
+# from ..dbconn import get_database
+from ..dbconn import database
+
 
 # module imports
 from api import oauth
@@ -17,7 +19,7 @@ import secrets
 router = APIRouter(prefix="/users",tags=["Users"])
 
 @router.post("/registration", response_description="Register New User", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
-async def registration(user_info: User, database: AsyncIOMotorDatabase = Depends(get_database)):
+async def registration(user_info: User):
     user_info = jsonable_encoder(user_info)
 
     # check for duplications
@@ -48,6 +50,6 @@ async def registration(user_info: User, database: AsyncIOMotorDatabase = Depends
     return created_user
 
 @router.post("/details", response_description="Get user details", response_model=UserResponse)
-async def details(current_user=Depends(oauth.get_current_user),database: AsyncIOMotorDatabase = Depends(get_database)):
+async def details(current_user=Depends(oauth.get_current_user)):
     user = await database["users"].find_one({"_id": current_user["_id"]})
     return user
